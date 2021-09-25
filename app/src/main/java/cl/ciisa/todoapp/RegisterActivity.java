@@ -8,6 +8,8 @@ import android.widget.Button;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.Date;
+
 import cl.ciisa.todoapp.ui.DatePickerFragment;
 
 public class RegisterActivity extends AppCompatActivity {
@@ -25,7 +27,7 @@ public class RegisterActivity extends AppCompatActivity {
         btnLogin = findViewById(R.id.activity_register_btn_login);
 
         tilBirthday.getEditText().setOnClickListener(view -> {
-            DatePickerFragment.showDatePickerDialog(this, tilBirthday);
+            DatePickerFragment.showDatePickerDialog(this, tilBirthday, new Date());
         });
 
         btnLogin.setOnClickListener(view -> {

@@ -19,7 +19,7 @@ public class DatePickerFragment extends DialogFragment {
     private DatePickerDialog.OnDateSetListener listener;
     private Date initialDate;
 
-    private DatePickerFragment(DatePickerDialog.OnDateSetListener listener, @Nullable Date initialDate) {
+    private DatePickerFragment(DatePickerDialog.OnDateSetListener listener, Date initialDate) {
         this.listener = listener;
         this.initialDate = initialDate;
     }

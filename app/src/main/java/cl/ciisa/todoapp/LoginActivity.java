@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import cl.ciisa.todoapp.controllers.AuthController;
+
 public class LoginActivity extends AppCompatActivity {
 
     private Button btnLogin, btnRegister;
@@ -49,14 +51,12 @@ public class LoginActivity extends AppCompatActivity {
                 tilPassword.setErrorEnabled(false);
             }
 
-            if (password.equals("123456") && emailValid && passwordValid) {
-                Toast.makeText(view.getContext(), String.format("Bienvenido %s", email), Toast.LENGTH_SHORT).show();
-                Intent i = new Intent(view.getContext(), MainActivity.class);
-                startActivity(i);
-                finish();
-            } else {
-                Toast.makeText(view.getContext(), String.format("La contraseña es incorrecta", email), Toast.LENGTH_SHORT).show();
-            }
+           if (emailValid && passwordValid) {
+               AuthController controller = new AuthController(view.getContext());
+               controller.login(email, password);
+           } else {
+               Toast.makeText(view.getContext(), "Campos inválidos", Toast.LENGTH_SHORT).show();
+           }
         });
 
         btnRegister.setOnClickListener(view -> {

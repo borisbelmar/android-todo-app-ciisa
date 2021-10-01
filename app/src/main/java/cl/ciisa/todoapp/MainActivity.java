@@ -38,6 +38,14 @@ public class MainActivity extends AppCompatActivity {
 
         lvAllTasks.setAdapter(adapter);
 
+        lvAllTasks.setOnItemClickListener(((adapterView, view, index, id) -> {
+            Task task = taskList.get(index);
+
+            Intent i = new Intent(view.getContext(), TaskDetailActivity.class);
+            i.putExtra("task", task);
+            view.getContext().startActivity(i);
+        }));
+
         btnLogout.setOnClickListener(view -> {
             Toast.makeText(view.getContext(), "Cerrando Sesión", Toast.LENGTH_SHORT).show();
             Intent i = new Intent(view.getContext(), LoginActivity.class);

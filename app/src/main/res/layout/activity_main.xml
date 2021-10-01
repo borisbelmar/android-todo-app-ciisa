@@ -24,7 +24,9 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mis tareas" />
+            android:layout_marginBottom="8dp"
+            android:text="Mis tareas"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <ListView
             android:id="@+id/activity_main_lv_all_tasks"

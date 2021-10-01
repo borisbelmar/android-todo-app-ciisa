@@ -35,7 +35,14 @@
             android:layout_weight="1" />
 
         <Button
+            android:id="@+id/activity_main_btn_new_task"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nueva tarea" />
+
+        <Button
             android:id="@+id/activity_main_btn_logout"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cerrar Sesión" />

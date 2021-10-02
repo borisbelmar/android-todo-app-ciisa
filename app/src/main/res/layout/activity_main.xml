@@ -21,11 +21,11 @@
 
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/activity_main_tv_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Mis tareas"
+            android:text="Tareas de Usuario"
             android:textAppearance="@style/TextAppearance.AppCompat.Large" />
 
         <ListView

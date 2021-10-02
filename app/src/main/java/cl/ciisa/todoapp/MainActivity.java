@@ -6,17 +6,22 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cl.ciisa.todoapp.controllers.AuthController;
 import cl.ciisa.todoapp.models.Task;
+import cl.ciisa.todoapp.models.User;
 import cl.ciisa.todoapp.ui.TaskAdapter;
 
 public class MainActivity extends AppCompatActivity {
+    private TextView tvTitle;
     private ListView lvAllTasks;
     private Button btnLogout;
+    private AuthController authController;
 
     private List<Task> taskList = new ArrayList<>();
 
@@ -25,8 +30,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        authController = new AuthController(this);
+
+        tvTitle = findViewById(R.id.activity_main_tv_title);
         lvAllTasks = findViewById(R.id.activity_main_lv_all_tasks);
         btnLogout = findViewById(R.id.activity_main_btn_logout);
+
+        User user = authController.getUserSession();
+
+        tvTitle.setText(String.format("Notas de %s", user.getFirstName()));
 
         for (int x = 0; x < 10; ++x) {
             Task newTask = new Task(String.format("Title %d", x), String.format("Description %d", x));
@@ -46,11 +58,6 @@ public class MainActivity extends AppCompatActivity {
             view.getContext().startActivity(i);
         }));
 
-        btnLogout.setOnClickListener(view -> {
-            Toast.makeText(view.getContext(), "Cerrando Sesión", Toast.LENGTH_SHORT).show();
-            Intent i = new Intent(view.getContext(), LoginActivity.class);
-            startActivity(i);
-            finish();
-        });
+        btnLogout.setOnClickListener(view -> { authController.logout(); });
     }
 }

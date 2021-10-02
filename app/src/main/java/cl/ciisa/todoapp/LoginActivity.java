@@ -12,16 +12,21 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputLayout;
 
 import cl.ciisa.todoapp.controllers.AuthController;
+import cl.ciisa.todoapp.models.User;
 
 public class LoginActivity extends AppCompatActivity {
 
     private Button btnLogin, btnRegister;
     private TextInputLayout tilEmail, tilPassword;
+    private AuthController authController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        authController = new AuthController(this);
+        authController.checkUserSession();
 
         btnRegister = findViewById(R.id.activity_login_btn_register);
         btnLogin = findViewById(R.id.activity_login_btn_login);
@@ -52,8 +57,7 @@ public class LoginActivity extends AppCompatActivity {
             }
 
            if (emailValid && passwordValid) {
-               AuthController controller = new AuthController(view.getContext());
-               controller.login(email, password);
+               authController.login(email, password);
            } else {
                Toast.makeText(view.getContext(), "Campos inválidos", Toast.LENGTH_SHORT).show();
            }

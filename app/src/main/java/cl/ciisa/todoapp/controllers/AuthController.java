@@ -11,8 +11,12 @@ import java.util.Date;
 
 import cl.ciisa.todoapp.LoginActivity;
 import cl.ciisa.todoapp.MainActivity;
+import cl.ciisa.todoapp.dao.UserDao;
 import cl.ciisa.todoapp.lib.BCrypt;
+import cl.ciisa.todoapp.lib.TodoAppDatabase;
 import cl.ciisa.todoapp.models.User;
+import cl.ciisa.todoapp.models.UserEntity;
+import cl.ciisa.todoapp.models.UserMapper;
 
 public class AuthController {
     private final String KEY_USER_ID = "userId";
@@ -20,6 +24,7 @@ public class AuthController {
     private final String KEY_FIRST_NAME = "userFirstName";
     private final String KEY_LAST_NAME = "userLastName";
 
+    private UserDao userDao;
     private Context ctx;
     private SharedPreferences preferences;
 
@@ -28,6 +33,7 @@ public class AuthController {
         int PRIVATE_MODE = 0;
         String PREF_NAME = "TodoAppPref";
         this.preferences = ctx.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+        this.userDao = TodoAppDatabase.getInstance(ctx).userDao();
     }
 
     private void setUserSession(User user) {
@@ -64,7 +70,9 @@ public class AuthController {
         String hashedPassword = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
         user.setPassword(hashedPassword);
 
-        // Implementar el registro en Base de datos
+        UserEntity userEntity = new UserMapper(user).toEntity();
+
+        userDao.insert(userEntity);
 
         Toast.makeText(ctx, String.format("Usuario %s registrado", user.getEmail()), Toast.LENGTH_SHORT).show();
         Intent i = new Intent(ctx, LoginActivity.class);
@@ -72,9 +80,9 @@ public class AuthController {
     }
 
     public void login(String email, String password) {
-        User user = new User("Boris", "Belmar", "bbelmar@ciisa.cl", new Date());
-        user.setPassword("$2a$10$YtWAhrL.q45dscD8PUt/zOswiimOai0EsHTsfBm5S6rfVC1sILGQC");
-        user.setId(1);
+        UserEntity userEntity = userDao.findByEmail(email);
+        User user = new UserMapper(userEntity).toBase();
+
         if (BCrypt.checkpw(password, user.getPassword())) {
             setUserSession(user);
             Toast.makeText(ctx, String.format("Bienvenido %s", email), Toast.LENGTH_SHORT).show();

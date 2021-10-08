@@ -3,7 +3,7 @@ package cl.ciisa.todoapp.models;
 
 import java.util.Date;
 
-public class User {
+public class User implements IUser {
     private long id;
     private String firstName;
     private String lastName;

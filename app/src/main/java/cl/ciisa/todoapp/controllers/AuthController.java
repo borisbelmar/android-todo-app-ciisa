@@ -81,6 +81,12 @@ public class AuthController {
 
     public void login(String email, String password) {
         UserEntity userEntity = userDao.findByEmail(email);
+
+        if (userEntity == null) {
+            Toast.makeText(ctx, "Credenciales inválidas", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         User user = new UserMapper(userEntity).toBase();
 
         if (BCrypt.checkpw(password, user.getPassword())) {
@@ -90,7 +96,7 @@ public class AuthController {
             ctx.startActivity(i);
             ((Activity) ctx).finish();
         } else {
-            Toast.makeText(ctx, String.format("La contraseña es incorrecta", email), Toast.LENGTH_SHORT).show();
+            Toast.makeText(ctx, String.format("Credenciales inválidas", email), Toast.LENGTH_SHORT).show();
         }
     }
 

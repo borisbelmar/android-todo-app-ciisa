@@ -47,10 +47,13 @@ public class TaskAdapter extends BaseAdapter {
         TextView tvTitle = view.findViewById(R.id.item_task_tv_title);
         TextView tvId = view.findViewById(R.id.item_task_tv_id);
         TextView tvDescription = view.findViewById(R.id.item_task_tv_description);
+        TextView tvDue = view.findViewById(R.id.item_task_tv_due);
+
 
         tvId.setText(Long.toString(task.getId()));
         tvTitle.setText(task.getTitle());
         tvDescription.setText(task.getDescription());
+        tvDue.setText(String.format("Vence el: %s", task.getStringDue()));
 
         return view;
     }

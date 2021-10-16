@@ -7,11 +7,13 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
+import cl.ciisa.todoapp.dao.TaskDao;
 import cl.ciisa.todoapp.dao.UserDao;
+import cl.ciisa.todoapp.models.TaskEntity;
 import cl.ciisa.todoapp.models.UserEntity;
 import cl.ciisa.todoapp.utils.Converters;
 
-@Database(entities = {UserEntity.class}, version = 1)
+@Database(entities = {UserEntity.class, TaskEntity.class}, version = 3)
 @TypeConverters({Converters.class})
 public abstract class TodoAppDatabase extends RoomDatabase {
     private static final String DB_NAME = "todo_app_db";
@@ -28,4 +30,5 @@ public abstract class TodoAppDatabase extends RoomDatabase {
     }
 
     public abstract UserDao userDao();
+    public abstract TaskDao taskDao();
 }

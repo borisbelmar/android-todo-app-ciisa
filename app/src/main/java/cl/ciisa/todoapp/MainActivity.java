@@ -19,13 +19,14 @@ import java.util.List;
 
 import cl.ciisa.todoapp.controllers.AuthController;
 import cl.ciisa.todoapp.controllers.TaskController;
+import cl.ciisa.todoapp.lib.TilValidator;
 import cl.ciisa.todoapp.models.Task;
 import cl.ciisa.todoapp.models.User;
 import cl.ciisa.todoapp.ui.DatePickerFragment;
 import cl.ciisa.todoapp.ui.TaskAdapter;
+import cl.ciisa.todoapp.utils.DateUtils;
 
 public class MainActivity extends AppCompatActivity {
-    private final String DATE_PATTERN = "yyyy-MM-dd";
     private TextView tvTitle, tvClearFilter;
     private ListView lvAllTasks;
     private TextInputLayout tilFrom, tilTo;
@@ -59,21 +60,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         User user = authController.getUserSession();
-
         tvTitle.setText(String.format("Notas de %s", user.getFirstName()));
 
         List<Task> taskList = taskController.getAll();
-        TaskAdapter adapter = new TaskAdapter(this, taskList);
-
-        lvAllTasks.setAdapter(adapter);
-
-        lvAllTasks.setOnItemClickListener(((adapterView, view, index, id) -> {
-            Task task = taskList.get(index);
-
-            Intent i = new Intent(view.getContext(), TaskDetailActivity.class);
-            i.putExtra("task", task);
-            view.getContext().startActivity(i);
-        }));
+        this.setAllTasksAdapter(taskList);
 
         btnNewTask.setOnClickListener(view -> {
             Intent i = new Intent(view.getContext(), NewTaskActivity.class);
@@ -86,38 +76,30 @@ public class MainActivity extends AppCompatActivity {
             String fromStr = tilFrom.getEditText().getText().toString();
             String toStr = tilTo.getEditText().getText().toString();
 
-            boolean validFrom = !fromStr.isEmpty();
-            boolean validTo = !toStr.isEmpty();
+            boolean validFrom = new TilValidator(tilFrom)
+                    .required()
+                    .date()
+                    .dateBefore(DateUtils.unsafeParse(toStr))
+                    .isValid();
+            boolean validTo = new TilValidator(tilTo)
+                    .required()
+                    .date()
+                    .dateAfter(DateUtils.unsafeParse(fromStr))
+                    .isValid();
 
             if (validFrom && validTo) {
-                SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_PATTERN);
-                try {
-                    Date from = dateFormatter.parse(fromStr);
-                    Date to = dateFormatter.parse(toStr);
+                Date from = DateUtils.unsafeParse(fromStr);
+                Date to = DateUtils.unsafeParse(toStr);
 
-                    List<Task> taskRangeList = taskController.getRange(from, to);
-                    TaskAdapter rangeAdapter = new TaskAdapter(this, taskRangeList);
-
-                    lvAllTasks.setAdapter(rangeAdapter);
-
-                    lvAllTasks.setOnItemClickListener(((adapterView, rangeView, index, id) -> {
-                        Task task = taskRangeList.get(index);
-
-                        Intent i = new Intent(rangeView.getContext(), TaskDetailActivity.class);
-                        i.putExtra("task", task);
-                        rangeView.getContext().startActivity(i);
-                    }));
-
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                List<Task> taskRangeList = taskController.getRange(from, to);
+                this.setAllTasksAdapter(taskRangeList);
             }
         });
 
         tvClearFilter.setOnClickListener(view -> {
             tilFrom.getEditText().setText("");
             tilTo.getEditText().setText("");
-            lvAllTasks.setAdapter(adapter);
+            this.setAllTasksAdapter(taskList);
         });
     }
 
@@ -125,8 +107,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         List<Task> taskList = taskController.getAll();
-        TaskAdapter adapter = new TaskAdapter(this, taskList);
+        this.setAllTasksAdapter(taskList);
+    }
 
+    private void setAllTasksAdapter(List<Task> taskList) {
+        TaskAdapter adapter = new TaskAdapter(this, taskList);
         lvAllTasks.setAdapter(adapter);
 
         lvAllTasks.setOnItemClickListener(((adapterView, view, index, id) -> {

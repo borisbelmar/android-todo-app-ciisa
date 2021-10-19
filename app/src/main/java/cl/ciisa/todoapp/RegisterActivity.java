@@ -8,13 +8,13 @@ import android.widget.Button;
 
 import com.google.android.material.textfield.TextInputLayout;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import cl.ciisa.todoapp.controllers.AuthController;
+import cl.ciisa.todoapp.lib.TilValidator;
 import cl.ciisa.todoapp.models.User;
 import cl.ciisa.todoapp.ui.DatePickerFragment;
+import cl.ciisa.todoapp.utils.DateUtils;
 
 public class RegisterActivity extends AppCompatActivity {
     private final String DATE_PATTERN = "yyyy-MM-dd";
@@ -45,16 +45,33 @@ public class RegisterActivity extends AppCompatActivity {
             String password = tilPassword.getEditText().getText().toString();
             String birthday = tilBirthday.getEditText().getText().toString();
 
-            // TODO: Implementar validaciones
+            boolean validFirstName = new TilValidator(tilFirstName)
+                    .required()
+                    .strMin(3)
+                    .isValid();
+            boolean validLastName = new TilValidator(tilLastName)
+                    .required()
+                    .strMin(3)
+                    .isValid();
+            boolean validEmail = new TilValidator(tilEmail)
+                    .required()
+                    .email()
+                    .isValid();
+            boolean validPassword = new TilValidator(tilPassword)
+                    .required()
+                    .strMin(6)
+                    .isValid();
+            boolean validBirthday = new TilValidator(tilBirthday)
+                    .required()
+                    .date()
+                    .dateBefore(DateUtils.addDays(new Date(), 1))
+                    .isValid();
 
-            SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_PATTERN);
-
-            Date birthdayDate = null;
-            try {
-                birthdayDate = dateFormatter.parse(birthday);
-            } catch (ParseException e) {
-                e.printStackTrace();
+            if (!validFirstName || !validLastName || !validEmail || !validPassword || !validBirthday) {
+                return;
             }
+
+            Date birthdayDate = DateUtils.unsafeParse(birthday);
 
             User user = new User(firstName, lastName, email, birthdayDate);
             user.setPassword(password);

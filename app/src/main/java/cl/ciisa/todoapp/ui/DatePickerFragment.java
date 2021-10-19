@@ -15,6 +15,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
+import cl.ciisa.todoapp.utils.DateUtils;
+
 public class DatePickerFragment extends DialogFragment {
     private DatePickerDialog.OnDateSetListener listener;
     private Date initialDate;
@@ -38,7 +40,7 @@ public class DatePickerFragment extends DialogFragment {
 
     public static void showDatePickerDialog(AppCompatActivity activity, final TextInputLayout til, Date initialDate) {
         DatePickerDialog.OnDateSetListener listener = (datePicker, year, month, day) -> {
-            final String selectedDate = String.format("%d-%02d-%02d", year, (month + 1), day);
+            final String selectedDate = String.format(DateUtils.DATE_STRING_FORMAT, year, (month + 1), day);
             til.getEditText().setText(selectedDate);
         };
         DatePickerFragment newFragment = new DatePickerFragment(listener, initialDate);

@@ -12,6 +12,7 @@ import android.widget.Toast;
 import com.google.android.material.textfield.TextInputLayout;
 
 import cl.ciisa.todoapp.controllers.AuthController;
+import cl.ciisa.todoapp.lib.TilValidator;
 import cl.ciisa.todoapp.models.User;
 
 public class LoginActivity extends AppCompatActivity {
@@ -26,7 +27,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         authController = new AuthController(this);
-        authController.checkUserSession();
 
         btnRegister = findViewById(R.id.activity_login_btn_register);
         btnLogin = findViewById(R.id.activity_login_btn_login);
@@ -39,28 +39,19 @@ public class LoginActivity extends AppCompatActivity {
             String email = tilEmail.getEditText().getText().toString();
             String password = tilPassword.getEditText().getText().toString();
 
-            boolean emailValid = !email.isEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches();
-            boolean passwordValid = !password.isEmpty();
+            boolean emailValid = new TilValidator(tilEmail)
+                    .required()
+                    .email()
+                    .isValid();
+            boolean passwordValid = new TilValidator(tilPassword)
+                    .required()
+                    .isValid();
 
-            if (!emailValid) {
-                tilEmail.setError("El email es inválido");
+            if (emailValid && passwordValid) {
+                authController.login(email, password);
             } else {
-                tilEmail.setError(null);
-                tilEmail.setErrorEnabled(false);
+                Toast.makeText(view.getContext(), "Campos inválidos", Toast.LENGTH_SHORT).show();
             }
-
-            if (!passwordValid) {
-                tilPassword.setError("Campo requerido");
-            } else {
-                tilPassword.setError(null);
-                tilPassword.setErrorEnabled(false);
-            }
-
-           if (emailValid && passwordValid) {
-               authController.login(email, password);
-           } else {
-               Toast.makeText(view.getContext(), "Campos inválidos", Toast.LENGTH_SHORT).show();
-           }
         });
 
         btnRegister.setOnClickListener(view -> {
